@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModelContextProtocol;
 using ModelContextProtocol.Server;
-using System.Net.Http.Headers;
 
 [McpServerToolType]
 internal class Program

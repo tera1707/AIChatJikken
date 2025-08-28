@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIChatJikken", "AIChatJikken\AIChatJikken.csproj", "{C0876485-B30B-46F5-8503-4798FF64FF28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyMcpServer", "MyMcpServer\MyMcpServer.csproj", "{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{2022CB0F-8BAF-F49E-0C48-8EF4C96EC109}"
+	ProjectSection(SolutionItems) = preProject
+		CopyMcp.bat = CopyMcp.bat
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0876485-B30B-46F5-8503-4798FF64FF28}.Debug|x64.ActiveCfg = Debug|x64
+		{C0876485-B30B-46F5-8503-4798FF64FF28}.Debug|x64.Build.0 = Debug|x64
+		{C0876485-B30B-46F5-8503-4798FF64FF28}.Release|x64.ActiveCfg = Release|x64
+		{C0876485-B30B-46F5-8503-4798FF64FF28}.Release|x64.Build.0 = Release|x64
+		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Debug|x64.ActiveCfg = Debug|x64
+		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Debug|x64.Build.0 = Debug|x64
+		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Release|x64.ActiveCfg = Release|x64
+		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4472115-01FD-4618-B109-07DD76228841}
+	EndGlobalSection
+EndGlobal

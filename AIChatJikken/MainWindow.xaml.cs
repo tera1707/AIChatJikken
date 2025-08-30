@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.AI;
+﻿using Azure.AI.OpenAI;
+using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
-using OpenAI;
 using System.ClientModel;
 using System.Diagnostics;
 using System.Windows;
@@ -14,7 +14,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         PromptBox.Text = "休日のパパはなにをしていますか？";
-        Key.Text = "ここにgithub modelsのキーを入れてください";
+        Key.Text = "ここにAzure OpenAIのキーを入れてください。";
     }
 
     private async void Button_Click(object sender, RoutedEventArgs e)
@@ -61,22 +61,16 @@ public partial class MainWindow : Window
         // github modelsのキーを入れる
         var credential = new ApiKeyCredential(key);
 
-        // github modelsのエンドポイントを指定
-        var openAIOptions = new OpenAIClientOptions()
-        {
-            Endpoint = new Uri("https://models.github.ai/inference")
-        };
-
         // LLMのモデルを指定
-        var aiClient = new OpenAIClient(credential, openAIOptions)
-                            .GetChatClient("openai/gpt-4o")
+        var aiClient = new AzureOpenAIClient(new Uri("https://myazureopenaijikken.openai.azure.com/"), credential)
+                            .GetChatClient("gpt-4o-mini")
                             .AsIChatClient();
 
         var chatClient = aiClient.AsBuilder()
                                     .UseFunctionInvocation()
                                     .Build();
 
-        var chatmsg = new ChatMessage(ChatRole.User, prompt);
+        var chatmsg = new ChatMessage(Microsoft.Extensions.AI.ChatRole.User, prompt);
 
         // チャットを送信
         var res = await chatClient.GetResponseAsync([chatmsg], chatOption);

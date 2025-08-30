@@ -62,7 +62,7 @@ public partial class MainWindow : Window
         var credential = new ApiKeyCredential(key);
 
         // LLMのモデルを指定
-        var aiClient = new AzureOpenAIClient(new Uri("https://myazureopenaijikken.openai.azure.com/"), credential)
+        var aiClient = new AzureOpenAIClient(new Uri("https://myendpoint.openai.azure.com/"), credential)
                             .GetChatClient("gpt-4o-mini")
                             .AsIChatClient();
 

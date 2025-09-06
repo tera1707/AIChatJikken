@@ -3,6 +3,7 @@ using ModelContextProtocol.Client;
 using OpenAI;
 using System.ClientModel;
 using System.Diagnostics;
+using System.Net;
 using System.Windows;
 
 namespace AIChatJikken;
@@ -58,19 +59,7 @@ public partial class MainWindow : Window
             Tools = [.. mcpTools]
         };
 
-        // github modelsのキーを入れる
-        var credential = new ApiKeyCredential(key);
-
-        // github modelsのエンドポイントを指定
-        var openAIOptions = new OpenAIClientOptions()
-        {
-            Endpoint = new Uri("https://models.github.ai/inference")
-        };
-
-        // LLMのモデルを指定
-        var aiClient = new OpenAIClient(credential, openAIOptions)
-                            .GetChatClient("openai/gpt-4o")
-                            .AsIChatClient();
+        var aiClient = new OllamaChatClient(new Uri("http://localhost:11434/"), "llama3.2");
 
         var chatClient = aiClient.AsBuilder()
                                     .UseFunctionInvocation()
@@ -78,6 +67,7 @@ public partial class MainWindow : Window
 
         var chatmsg = new ChatMessage(ChatRole.User, prompt);
 
+        Thread.Sleep(5000);
         // チャットを送信
         var res = await chatClient.GetResponseAsync([chatmsg], chatOption);
 

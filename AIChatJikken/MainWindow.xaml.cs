@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Client;
 using System.ClientModel;
 using System.Diagnostics;
@@ -10,30 +11,22 @@ namespace AIChatJikken;
 
 public partial class MainWindow : Window
 {
+    IChatClient? aiClient;
+    IChatClient? chatClient;
+    ChatOptions? chatOption;
     List<ChatMessage> chatHistory = new();
+
+    IMcpClient? mcpClient;
 
     public MainWindow()
     {
         InitializeComponent();
-
-        PromptBox.Text = "休日のパパはなにをしていますか？";
-        Key.Text = "ここにAzure OpenAIのキーを入れてください。";
     }
 
-    private async void Button_Click(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        SendButton.IsEnabled = false;
-        var prompt = PromptBox.Text;
-
-        if (prompt is null)
-            return;
-
-        ResponseBlock.Text = await GetCompletionAsync(prompt, Key.Text);
-        SendButton.IsEnabled = true;
-    }
-
-    public async Task<string> GetCompletionAsync(string prompt, string key)
-    {
+        var configuration = new ConfigurationBuilder().AddUserSecrets<MainWindow>().Build();
+        
         // MCPサーバー起動時のパラメータの設定
         var clientTransport = new StdioClientTransport(new()
         {
@@ -44,7 +37,7 @@ public partial class MainWindow : Window
         });
 
         // MCPクライアントを作成（ここで、MCPサーバーが起動する）
-        var mcpClient = await McpClientFactory.CreateAsync(clientTransport!);
+        mcpClient = await McpClientFactory.CreateAsync(clientTransport!);
 
         // ツールの名前を列挙
         var mcpTools = await mcpClient.ListToolsAsync();
@@ -55,37 +48,64 @@ public partial class MainWindow : Window
 
         //-------------------------------
 
-        var chatOption = new ChatOptions
+        chatOption = new ChatOptions
         {
             ToolMode = ChatToolMode.Auto,
             Tools = [.. mcpTools]
         };
 
         // github modelsのキーを入れる
-        var credential = new ApiKeyCredential(key);
+        var credential = new ApiKeyCredential(configuration["AzureOpenAI:Token"]!);
 
         // LLMのモデルを指定
-        var aiClient = new AzureOpenAIClient(new Uri("https://myendpoint.openai.azure.com/"), credential)
+        var endpoint = configuration["AzureOpenAI:Endpoint"];
+        aiClient = new AzureOpenAIClient(new Uri(endpoint!), credential)
                             .GetChatClient("gpt-4o-mini")
                             .AsIChatClient();
 
-        var chatClient = aiClient.AsBuilder()
+        chatClient = aiClient.AsBuilder()
                                     .UseFunctionInvocation()
                                     .Build();
 
+        PromptBox.Text = "休日のパパはなにをしていますか？";
+    }
+
+    private async void Button_Click(object sender, RoutedEventArgs e)
+    {
+        SendButton.IsEnabled = false;
+        ResponseBlock.Text = "";
+        var prompt = PromptBox.Text;
+
+        if (prompt is null)
+            return;
+
+        await GetCompletionAsync(prompt, (response =>
+        {
+            ResponseBlock.Text += response;
+        }));
+
+        SendButton.IsEnabled = true;
+    }
+
+    public async Task GetCompletionAsync(string prompt, Action<string> onResponse)
+    {
         var chatmsg = new ChatMessage(Microsoft.Extensions.AI.ChatRole.User, prompt);
         chatHistory.Add(chatmsg);
 
         // チャットを送信
-        var res = await chatClient.GetResponseAsync(chatHistory, chatOption);
+        string res = "";
+        await foreach (var update in chatClient!.GetStreamingResponseAsync(chatHistory, chatOption))
+        {
+            onResponse(update.Text);
+            res += update.Text;
+        }
 
-        chatHistory.Add(new ChatMessage(ChatRole.Assistant, res.Text));
+        chatHistory.Add(new ChatMessage(ChatRole.Assistant, res));
+    }
 
-        //-------------------------
-
+    private async void Window_Closed(object sender, EventArgs e)
+    {
         // MCPクライアントを終了（ここで、MCPサーバーが終了する）
-        await mcpClient.DisposeAsync();
-
-        return res.Text;
+        await mcpClient!.DisposeAsync();
     }
 }

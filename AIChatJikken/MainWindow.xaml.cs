@@ -1,4 +1,5 @@
-﻿using Azure.AI.OpenAI;
+﻿using Azure;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
 using System.ClientModel;
@@ -9,6 +10,8 @@ namespace AIChatJikken;
 
 public partial class MainWindow : Window
 {
+    List<ChatMessage> chatHistory = new();
+
     public MainWindow()
     {
         InitializeComponent();
@@ -71,9 +74,12 @@ public partial class MainWindow : Window
                                     .Build();
 
         var chatmsg = new ChatMessage(Microsoft.Extensions.AI.ChatRole.User, prompt);
+        chatHistory.Add(chatmsg);
 
         // チャットを送信
-        var res = await chatClient.GetResponseAsync([chatmsg], chatOption);
+        var res = await chatClient.GetResponseAsync(chatHistory, chatOption);
+
+        chatHistory.Add(new ChatMessage(ChatRole.Assistant, res.Text));
 
         //-------------------------
 

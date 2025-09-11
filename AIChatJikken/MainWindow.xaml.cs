@@ -14,8 +14,8 @@ namespace AIChatJikken;
 
 public partial class MainWindow : Window
 {
-    MyMcpClient mcpClient;
-    MyChatClient chatClient;
+    MyMcpClient? mcpClient;
+    MyChatClient? chatClient;
 
     public MainWindow()
     {
@@ -28,12 +28,13 @@ public partial class MainWindow : Window
 
         // credential endpoint mcpTools
         //-------------------------------
-        mcpClient = await MyMcpClient.CreateMcpServer("My Mcp Server", @"C:\Program Files\MyMcpServer\MyMcpServer.exe", []);
+        //mcpClient = await MyMcpClient.CreateMcpServer("My Mcp Server", @"C:\Program Files\MyMcpServer\MyMcpServer.exe", []);
 
         //-------------------------------
         var credential = new ApiKeyCredential(configuration["AzureOpenAI:Token"]!);
         var endpoint = new Uri(configuration["AzureOpenAI:Endpoint"]!);
-        chatClient = new MyChatClient(endpoint, credential, await mcpClient.GetMcpClientTools());
+        //chatClient = new MyChatClient(endpoint, credential, await mcpClient?.GetMcpClientTools());
+        chatClient = new MyChatClient(endpoint, credential, null);
 
         PromptBox.Text = "休日のパパはなにをしていますか？";
     }
@@ -59,6 +60,9 @@ public partial class MainWindow : Window
     private async void Window_Closed(object sender, EventArgs e)
     {
         // MCPクライアントを終了（ここで、MCPサーバーが終了する）
-        await mcpClient!.DisposeAsync();
+        if (mcpClient is not null)
+        {
+            await mcpClient.DisposeAsync();
+        }
     }
 }

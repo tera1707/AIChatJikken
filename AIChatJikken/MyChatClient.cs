@@ -10,9 +10,9 @@ internal class MyChatClient :IDisposable
     IChatClient? chatClient;
     List<ChatMessage> chatHistory = new();
 
-    IList<McpClientTool> _mcpTools;
+    IList<McpClientTool>? _mcpTools;
 
-    public MyChatClient(Uri endpoint, ApiKeyCredential credential, IList<McpClientTool> mcpTools)
+    public MyChatClient(Uri endpoint, ApiKeyCredential credential, IList<McpClientTool>? mcpTools)
     {
         // LLMのモデルを指定
         var aiClient = new AzureOpenAIClient(endpoint!, credential)
@@ -33,7 +33,7 @@ internal class MyChatClient :IDisposable
         var chatOption = new ChatOptions
         {
             ToolMode = ChatToolMode.Auto,
-            Tools = [.. _mcpTools]
+            Tools = _mcpTools is not null ? [.. _mcpTools] : null
         };
 
         // チャットを送信

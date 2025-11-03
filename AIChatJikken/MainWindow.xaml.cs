@@ -19,7 +19,7 @@ public partial class MainWindow : Window
     MyChatClient? chatClient1;
     MyChatClient? chatClient2;
 
-    private static readonly string prerequisites = "以下の内容について、質問をされたことを優先して、コメントをしてください。また、最後はこれまでの会話に関する質問で終わってください。\r\n--------\r\n";
+    private static readonly string prerequisites = "以下の内容について、コメントをしてください。提案を求められた際は、一つの案にこだわらず、出来るだけ色々な案を出すようにしてください。たまに質問をするようにしてください。\r\n--------\r\n";
 
     public MainWindow()
     {
@@ -41,7 +41,7 @@ public partial class MainWindow : Window
         chatClient1 = new MyChatClient(endpoint, credential, null);
         chatClient2 = new MyChatClient(endpoint, credential, null);
 
-        PromptBox.Text = "日本の国内旅行をしたいのですが、どこに行こうか迷っています。北海道から沖縄まで、夏の旅行のお勧めがあれば教えてください。";
+        PromptBox.Text = "昨今の環境問題について討論をさせてください。まずごみ問題についてどう思いますか？";
     }
 
     private async void Button_Click(object sender, RoutedEventArgs e)
@@ -54,14 +54,20 @@ public partial class MainWindow : Window
         if (userPrompt is null)
             return;
 
+        await chatClient1.GetCompletionAsync("あなたはツンデレの口調で話します。", (_) => { });
+        await chatClient2.GetCompletionAsync("あなたはおじいちゃんの口調で話します。", (_) => { });
+
+
         //まずは1番に、入力した問いを投げかける
         string prompt0 = prerequisites + userPrompt;
-        GetTargetTextBlock(0)!.Text += $"■No.{(0 % 2) + 1}-----------\r\n";
-        await GetTargetClient(0)!.GetCompletionAsync(prompt0, (response =>
+        int aite = 0;
+        var name = (aite % 2) == 0 ? "ギャル" : "じいちゃん";
+        GetTargetTextBlock(aite)!.Text += $"■{name}-----------\r\n";
+        await GetTargetClient(aite)!.GetCompletionAsync(prompt0, (response =>
         {
-            GetTargetTextBlock(0)!.Text += response;
+            GetTargetTextBlock(aite)!.Text += response;
         }));
-        GetTargetTextBlock(0)!.Text += "\r\n-----------------\r\n";
+        GetTargetTextBlock(aite)!.Text += "\r\n\r\n";
 
 
         string aitenoResponse = "";
@@ -73,7 +79,8 @@ public partial class MainWindow : Window
             string prompt = prerequisites + aitenoResponse;
             aitenoResponse = "";
 
-            GetTargetTextBlock(i)!.Text += $"■No.{(i % 2) + 1}-----------\r\n";
+            var name2 = (i % 2) == 0 ? "ギャル" : "じいちゃん";
+            GetTargetTextBlock(i)!.Text += $"■{name2}-----------\r\n";
             await GetTargetClient(i)!.GetCompletionAsync(prompt, (response =>
             {
                 GetTargetTextBlock(i)!.Text += response;

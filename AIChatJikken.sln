@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpServer1", "McpServer1\McpServer1.csproj", "{ED046171-6730-4ADC-BDCC-F8494CB328FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +29,9 @@ Global
 		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Debug|x64.Build.0 = Debug|x64
 		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Release|x64.ActiveCfg = Release|x64
 		{932F7611-ECFE-4C1F-BF59-CFB2D4D184E2}.Release|x64.Build.0 = Release|x64
+		{ED046171-6730-4ADC-BDCC-F8494CB328FB}.Debug|x64.ActiveCfg = Debug|x64
+		{ED046171-6730-4ADC-BDCC-F8494CB328FB}.Debug|x64.Build.0 = Debug|x64
+		{ED046171-6730-4ADC-BDCC-F8494CB328FB}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

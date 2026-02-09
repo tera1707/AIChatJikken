@@ -51,6 +51,4 @@ internal class MyChatClient :IDisposable
     {
         chatClient?.Dispose();
     }
-
-
 }
